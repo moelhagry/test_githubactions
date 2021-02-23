@@ -19,3 +19,5 @@ jobs:
     steps:
     - run: |
         echo "Hello ${{ github.event.inputs.name }}!"
+        echo "HAPPO_PREVIOUS_SHA=${{ github.event.before }}" >> $GITHUB_ENV
+        echo "HAPPO_CURRENT_SHA=${{ github.event.after }}" >> $GITHUB_ENV
