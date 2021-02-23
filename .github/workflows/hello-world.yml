@@ -8,9 +8,12 @@ on:
     # The workflow_dispatch event accepts optional inputs so you can customize the behavior of the workflow
     inputs:
       name:
-        description: 'Person to greet'
+        description: 'Enter Text'
         required: true
-        default: 'World'
+        default: 'Text'
+  repository_dispatch:
+    #this will allow start the workflow using an HTTP post from outside GitHub.
+    types: [ backend_automation ]
 # When the event is triggered, GitHub Actions will run the jobs indicated
 jobs:
   say_hello:
@@ -23,8 +26,8 @@ jobs:
       env:
         GITHUB_CONTEXT: ${{ toJson(github) }}
       run: echo "$GITHUB_CONTEXT"
-        echo "Test 1"
-        echo "HAPPO_PREVIOUS_SHA=${{ github.event.before }}"
-        echo "HAPPO_CURRENT_SHA=${{ github.event.after }}"
-        echo "end of test"
+           echo "Test 1"
+           echo "HAPPO_PREVIOUS_SHA=${{ github.event.before }}"
+           echo "HAPPO_CURRENT_SHA=${{ github.event.after }}"
+           echo "end of test"
 
