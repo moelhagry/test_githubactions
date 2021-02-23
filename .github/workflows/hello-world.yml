@@ -23,3 +23,8 @@ jobs:
       env:
         GITHUB_CONTEXT: ${{ toJson(github) }}
       run: echo "$GITHUB_CONTEXT"
+        echo "Test 1"
+        echo "HAPPO_PREVIOUS_SHA=${{ github.event.before }}"
+        echo "HAPPO_CURRENT_SHA=${{ github.event.after }}"
+        echo "end of test"
+
