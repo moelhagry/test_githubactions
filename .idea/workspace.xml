@@ -20,7 +20,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f7fd3cd8-e807-4be1-a486-0f2e6be98407" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/branch2.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/base_file.js" beforeDir="false" afterPath="$PROJECT_DIR$/base_file.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/branch2.js" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -68,6 +69,15 @@
     <option name="version" value="3" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
 </project>
