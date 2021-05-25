@@ -20,8 +20,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f7fd3cd8-e807-4be1-a486-0f2e6be98407" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/base_file.js" beforeDir="false" afterPath="$PROJECT_DIR$/base_file.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/branch2.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/workflows/auto-update.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/auto-update.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,6 +31,7 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectId" id="1ospjIJH1xTmOhQhH7uFOKtQ6gX" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectReloadState">
     <option name="STATE" value="1" />
   </component>
