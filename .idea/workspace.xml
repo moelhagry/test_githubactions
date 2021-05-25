@@ -19,10 +19,7 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f7fd3cd8-e807-4be1-a486-0f2e6be98407" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.github/workflows/auto-update.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/auto-update.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="f7fd3cd8-e807-4be1-a486-0f2e6be98407" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
