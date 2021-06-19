@@ -71,35 +71,3 @@ jobs:
                 console.info(`PR #${pull.number}: ticket has next iteration (Accept&Iterate flow). SKIP.`);
                 continue;
               }
-
-              const pullData = (await github.pulls.get({ owner, repo, pull_number: pull.number })).data;
-              if (pullData.mergeable && (pullData.mergeable_state === 'clean' || pullData.mergeable_state === 'unstable')) {
-                console.info(`PR #${pull.number}: ticket Accepted and PR is mergeable. MERGE.`);
-                try {
-                  await github.pulls.merge({ owner, repo, pull_number: pull.number });
-                  try {
-                    await axios.put(`https://rapid-engineering.atlassian.net/rest/api/latest/issue/${issueKey}`,
-                      { "update": { "labels": [ { "add": "auto-released" } ] } },
-                      { headers: { Authorization: `Basic ${jiraToken}` } }
-                    );
-                  } catch(e) {
-                    console.error(`PR #${pull.number}: can't add label to Jira ticket ${issueKey}. ${e.message}. `);
-                  }
-                  try {
-                    await mailer.sendMail({
-                      from: "Service User <${{secrets.MAIL_NOTIFICATION_FROM}}>",
-                      to: "${{secrets.MAIL_NOTIFICATION_TO}}",
-                      subject: `Scheduled to release: ${pull.title}`,
-                      text: `Dear team,\n\nJIRA ticket "${pull.title}" has been scheduled to release to production.\n\nPR link: ${pull.html_url}\n\nPlease note that it will take some time to complete the deployment.`
-                    });
-                  } catch(e) {
-                    console.error(`PR #${pull.number}: can't send notification email. ${e.message}. `);
-                  }
-                  continue;
-                } catch(e) {
-                  console.error(`PR #${pull.number}: the merge attempt failed. ${e.message}. `);
-                }
-              } else {
-                console.info(`PR #${pull.number}: ticket Accepted but PR is not mergeable yet. SKIP.`);
-              }
-            }
