@@ -1,8 +1,5 @@
 name: Auto-release for accepted tickets
 on:
-  schedule:
-    - cron: '*/10 * * * *'
-  workflow_dispatch:
   push:
 
 jobs:
