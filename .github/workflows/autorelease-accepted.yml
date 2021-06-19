@@ -23,3 +23,16 @@ jobs:
             const regex = new RegExp('LAMBDA-[0-9]+', 'gim');
             const {owner, repo} = context.repo;
             const jiraToken = Buffer.from("${{secrets.JIRA_MILOS_AUTH}}").toString('base64');
+
+            const mailer = nodemailer.createTransport({
+              host: "${{secrets.SMTP_HOST}}",
+              port: ${{secrets.SMTP_PORT}},
+              secure: true,
+              auth: {
+                user: "${{secrets.SMTP_USERNAME}}",
+                pass: "${{secrets.SMTP_PASSWORD}}"
+              }
+            });
+
+            const pulls = (await github.pulls.list({ owner, repo, state: "open", base: "master" })).data;
+            console.info(`Open PRs: ${pulls.map(p => p.number)}`);
