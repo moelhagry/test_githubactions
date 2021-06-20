@@ -21,6 +21,16 @@ jobs:
             const {owner, repo} = context.repo;
             const jiraToken = Buffer.from("${{secrets.JIRA_MILOS_AUTH}}").toString('base64');
 
+            function addLabelToIssue(issueKey, label) {
+            try {
+                  await axios.put(`https://rapid-engineering.atlassian.net/rest/api/latest/issue/${issueKey}`,
+                    { "update": { "labels": [ { "add": label } ] } },
+                    { headers: { Authorization: `Basic ${jiraToken}` } }
+                  );
+                } catch(e) {
+                  console.error(`PR #${pull.number}: can't add label to Jira ticket ${issueKey}. ${e.message}. `);
+                }
+            }
 
             const mailer = nodemailer.createTransport({
               host: "${{secrets.SMTP_HOST}}",
@@ -68,14 +78,8 @@ jobs:
                 if (!linkedTicketlabels.includes('auto-released')) {
                   console.info(`PR #${pull.number}: PR is dependant on ticket (${issueLink.outwardIssue.key}) which is not deployed yet. SKIP.`);
                   isDependantTicketNotDeployed = true;
-                try {
-                  await axios.put(`https://rapid-engineering.atlassian.net/rest/api/latest/issue/${issueKey}`,
-                    { "update": { "labels": [ { "add": "pending-dependencies" } ] } },
-                    { headers: { Authorization: `Basic ${jiraToken}` } }
-                  );
-                } catch(e) {
-                  console.error(`PR #${pull.number}: can't add label to Jira ticket ${issueKey}. ${e.message}. `);
-                }
+                  addLabelToIssue(issueKey, 'pending-dependencies');
+
                   break;
                 }
               }
