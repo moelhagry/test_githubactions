@@ -73,7 +73,6 @@ jobs:
                     { headers: { Authorization: `Basic ${jiraToken}` } }
                   );
                 } catch(e) {
-                    console.info(issueKey);
                   console.error(`PR #${pull.number}: can't add label to Jira ticket ${issueKey}. ${e.message}. `);
                 }
                   break;
@@ -108,7 +107,6 @@ jobs:
                       { headers: { Authorization: `Basic ${jiraToken}` } }
                     );
                   } catch(e) {
-                    console.info(issueKey);
                     console.error(`PR #${pull.number}: can't add label to Jira ticket ${issueKey}. ${e.message}. `);
                   }
                   try {
