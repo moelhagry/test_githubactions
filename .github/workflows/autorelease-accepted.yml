@@ -23,6 +23,7 @@ jobs:
 
             async function addLabelToIssue(issueKey, action, label, pullNumber) {
             try {
+                  console.info('check');
                   cont t = { "update": { "labels": [ { action: label } ] }};
                   console.info(t);
                   await axios.put(`https://rapid-engineering.atlassian.net/rest/api/latest/issue/${issueKey}`,
