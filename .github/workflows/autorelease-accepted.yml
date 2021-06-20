@@ -21,6 +21,7 @@ jobs:
             const {owner, repo} = context.repo;
             const jiraToken = Buffer.from("${{secrets.JIRA_MILOS_AUTH}}").toString('base64');
 
+
             const mailer = nodemailer.createTransport({
               host: "${{secrets.SMTP_HOST}}",
               port: ${{secrets.SMTP_PORT}},
