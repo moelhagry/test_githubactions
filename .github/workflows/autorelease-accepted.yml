@@ -59,6 +59,7 @@ jobs:
                 continue;
               }
 
+
               let isDependantTicketNotDeployed = false;
               for (const issueLink of issue.fields.issuelinks) {
               if (issueLink.type.outward == 'depends on' && issueLink.outwardIssue) {
