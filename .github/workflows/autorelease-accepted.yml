@@ -21,14 +21,14 @@ jobs:
             const {owner, repo} = context.repo;
             const jiraToken = Buffer.from("${{secrets.JIRA_MILOS_AUTH}}").toString('base64');
 
-            function addLabelToIssue(issueKey, label) {
+            async function addLabelToIssue(issueKey, label, pullNumber) {
             try {
                   await axios.put(`https://rapid-engineering.atlassian.net/rest/api/latest/issue/${issueKey}`,
                     { "update": { "labels": [ { "add": label } ] } },
                     { headers: { Authorization: `Basic ${jiraToken}` } }
                   );
                 } catch(e) {
-                  console.error(`PR #${pull.number}: can't add label to Jira ticket ${issueKey}. ${e.message}. `);
+                  console.error(`PR #${pullNumber}: can't add label to Jira ticket ${issueKey}. ${e.message}. `);
                 }
             }
 
@@ -78,7 +78,7 @@ jobs:
                 if (!linkedTicketlabels.includes('auto-released')) {
                   console.info(`PR #${pull.number}: PR is dependant on ticket (${issueLink.outwardIssue.key}) which is not deployed yet. SKIP.`);
                   isDependantTicketNotDeployed = true;
-                  addLabelToIssue(issueKey, 'pending-dependencies');
+                  await addLabelToIssue(issueKey, 'pending-dependencies', pull.number);
 
                   break;
                 }
@@ -106,14 +106,8 @@ jobs:
                 console.info(`PR #${pull.number}: ticket Accepted and PR is mergeable. MERGE.`);
                 try {
                   await github.pulls.merge({ owner, repo, pull_number: pull.number });
-                  try {
-                    await axios.put(`https://rapid-engineering.atlassian.net/rest/api/latest/issue/${issueKey}`,
-                      { "update": { "labels": [ { "add": "auto-released" } ] } },
-                      { headers: { Authorization: `Basic ${jiraToken}` } }
-                    );
-                  } catch(e) {
-                    console.error(`PR #${pull.number}: can't add label to Jira ticket ${issueKey}. ${e.message}. `);
-                  }
+                  await addLabelToIssue(issueKey, 'auto-released', pull.number);
+
                   try {
                     await mailer.sendMail({
                       from: "Service User <${{secrets.MAIL_NOTIFICATION_FROM}}>",
