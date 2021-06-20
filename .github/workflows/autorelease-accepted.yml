@@ -60,6 +60,31 @@ jobs:
                 continue;
               }
 
+              let isDependantTicketNotDeployed = false;
+              for (const issueLink of issue.fields.issuelinks) {
+              if (issueLink.type.outward == 'depends on' && issueLink.outwardIssue) {
+                const linkedTicketlabels = (await axios.get(`https://rapid-engineering.atlassian.net/rest/api/latest/issue/${issueLink.outwardIssue.key}?fields=labels`,
+                                  {headers: { Authorization: `Basic ${jiraToken}` }})).data.fields.labels;
+                if (!linkedTicketlabels.includes('auto-released')) {
+                  console.info(`PR #${pull.number}: PR is dependant on ticket (${issueLink.outwardIssue.key}) which is not deployed yet. SKIP.`);
+                  isDependantTicketNotDeployed = true;
+                try {
+                  await axios.put(`https://rapid-engineering.atlassian.net/rest/api/latest/issue/${issueKey}`,
+                    { "update": { "labels": [ { "add": "pending dependencies" } ] } },
+                    { headers: { Authorization: `Basic ${jiraToken}` } }
+                  );
+                } catch(e) {
+                  console.error(`PR #${pull.number}: can't add label to Jira ticket ${issueKey}. ${e.message}. `);
+                }
+                  break;
+                }
+              }
+              }
+
+              if (isDependantTicketNotDeployed) {
+              continue;
+              }
+
               if (!issue.fields.resolution || issue.fields.resolution.name !== 'Accepted') {
                 console.info(`PR #${pull.number}: ticket is not Accepted yet. SKIP.`);
                 continue;
@@ -70,6 +95,7 @@ jobs:
                 console.info(`PR #${pull.number}: ticket has next iteration (Accept&Iterate flow). SKIP.`);
                 continue;
               }
+
 
               const pullData = (await github.pulls.get({ owner, repo, pull_number: pull.number })).data;
               if (pullData.mergeable && (pullData.mergeable_state === 'clean' || pullData.mergeable_state === 'unstable')) {
