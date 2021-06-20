@@ -1,5 +1,6 @@
 name: Auto-release for accepted tickets
 on:
+
   push:
 
 jobs:
@@ -21,7 +22,7 @@ jobs:
             const {owner, repo} = context.repo;
             const jiraToken = Buffer.from("${{secrets.JIRA_MILOS_AUTH}}").toString('base64');
 
-            async function addLabelToIssue(issueKey, action, label, pullNumber) {
+            async function updateLabelToIssue(issueKey, action, label, pullNumber) {
             try {
                   await axios.put(`https://rapid-engineering.atlassian.net/rest/api/latest/issue/${issueKey}`,
                     { "update": { "labels": [ { [action]: label } ] } },
@@ -44,7 +45,6 @@ jobs:
 
             const pulls = (await github.pulls.list({ owner, repo, state: "open", base: "master" })).data;
             console.info(`Open PRs: ${pulls.map(p => p.number)}`);
-
             for (const pull of pulls) {
               const matches = pull.title.match(regex);
               if (!matches) {
@@ -69,24 +69,23 @@ jobs:
                 continue;
               }
 
-
               let isDependantTicketNotDeployed = false;
               for (const issueLink of issue.fields.issuelinks) {
-              if (issueLink.type.outward == 'depends on' && issueLink.outwardIssue) {
-                const linkedTicketlabels = (await axios.get(`https://rapid-engineering.atlassian.net/rest/api/latest/issue/${issueLink.outwardIssue.key}?fields=labels`,
-                                  {headers: { Authorization: `Basic ${jiraToken}` }})).data.fields.labels;
-                if (!linkedTicketlabels.includes('auto-released')) {
-                  console.info(`PR #${pull.number}: PR is dependant on ticket (${issueLink.outwardIssue.key}) which is not deployed yet. SKIP.`);
-                  isDependantTicketNotDeployed = true;
-                  await addLabelToIssue(issueKey, 'add', 'pending-dependencies', pull.number);
+                if (issueLink.type.outward == 'depends on' && issueLink.outwardIssue) {
+                  const linkedTicketlabels = (await axios.get(`https://rapid-engineering.atlassian.net/rest/api/latest/issue/${issueLink.outwardIssue.key}?fields=labels`,
+                                    {headers: { Authorization: `Basic ${jiraToken}` }})).data.fields.labels;
+                  if (!linkedTicketlabels.includes('auto-released')) {
+                    console.info(`PR #${pull.number}: PR is dependant on ticket (${issueLink.outwardIssue.key}) which is not deployed yet. SKIP.`);
+                    isDependantTicketNotDeployed = true;
+                    await updateLabelToIssue(issueKey, 'add', 'pending-dependencies', pull.number);
 
-                  break;
+                    break;
+                  }
                 }
-              }
               }
 
               if (isDependantTicketNotDeployed) {
-              continue;
+                continue;
               }
 
               if (!issue.fields.resolution || issue.fields.resolution.name !== 'Accepted') {
@@ -100,15 +99,13 @@ jobs:
                 continue;
               }
 
-
               const pullData = (await github.pulls.get({ owner, repo, pull_number: pull.number })).data;
               if (pullData.mergeable && (pullData.mergeable_state === 'clean' || pullData.mergeable_state === 'unstable')) {
                 console.info(`PR #${pull.number}: ticket Accepted and PR is mergeable. MERGE.`);
                 try {
                   await github.pulls.merge({ owner, repo, pull_number: pull.number });
-                  await addLabelToIssue(issueKey, 'remove', 'pending-dependencies', pull.number);
-                  await addLabelToIssue(issueKey, 'add', 'auto-released', pull.number);
-
+                  await updateLabelToIssue(issueKey, 'remove', 'pending-dependencies', pull.number);
+                  await updateLabelToIssue(issueKey, 'add', 'auto-released', pull.number);
                   try {
                     await mailer.sendMail({
                       from: "Service User <${{secrets.MAIL_NOTIFICATION_FROM}}>",
