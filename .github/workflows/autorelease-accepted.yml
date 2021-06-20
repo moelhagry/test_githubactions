@@ -73,7 +73,7 @@ jobs:
                     { headers: { Authorization: `Basic ${jiraToken}` } }
                   );
                 } catch(e) {
-                                console.error(e);
+                    console.info(issueKey);
                   console.error(`PR #${pull.number}: can't add label to Jira ticket ${issueKey}. ${e.message}. `);
                 }
                   break;
