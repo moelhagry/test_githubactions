@@ -71,7 +71,6 @@ jobs:
                 continue;
               }
 
-
               const pullData = (await github.pulls.get({ owner, repo, pull_number: pull.number })).data;
               if (pullData.mergeable && (pullData.mergeable_state === 'clean' || pullData.mergeable_state === 'unstable')) {
                 console.info(`PR #${pull.number}: ticket Accepted and PR is mergeable. MERGE.`);
