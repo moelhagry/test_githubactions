@@ -1,6 +1,5 @@
 name: Auto-release for accepted tickets
 on:
-
   push:
 
 jobs:
