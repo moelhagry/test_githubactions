@@ -48,7 +48,6 @@ jobs:
                 continue;
               }
 
-
               const issueKey = matches[0];
               const issue = (await axios.get(`https://rapid-engineering.atlassian.net/rest/api/latest/issue/${issueKey}`, {
                 headers: { Authorization: `Basic ${jiraToken}` }
