@@ -69,7 +69,7 @@ jobs:
                   isDependantTicketNotDeployed = true;
                 try {
                   await axios.put(`https://rapid-engineering.atlassian.net/rest/api/latest/issue/${issueKey}`,
-                    { "update": { "labels": [ { "add": "pending dependencies" } ] } },
+                    { "update": { "labels": [ { "add": "pending-dependencies" } ] } },
                     { headers: { Authorization: `Basic ${jiraToken}` } }
                   );
                 } catch(e) {
