@@ -105,6 +105,7 @@ jobs:
                   await github.pulls.merge({ owner, repo, pull_number: pull.number });
                   await updateLabelToIssue(issueKey, 'remove', 'pending-dependencies', pull.number);
                   await updateLabelToIssue(issueKey, 'add', 'auto-released', pull.number);
+
                   try {
                     await mailer.sendMail({
                       from: "Service User <${{secrets.MAIL_NOTIFICATION_FROM}}>",
