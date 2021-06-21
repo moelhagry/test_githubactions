@@ -3,7 +3,6 @@ on:
   schedule:
     - cron: '*/10 * * * *'
   workflow_dispatch:
-  push:
 
 jobs:
   enable-automerge:
@@ -60,7 +59,6 @@ jobs:
                 continue;
               }
 
-
               const issueKey = matches[0];
               const issue = (await axios.get(`https://rapid-engineering.atlassian.net/rest/api/latest/issue/${issueKey}`, {
                 headers: { Authorization: `Basic ${jiraToken}` }
@@ -71,6 +69,7 @@ jobs:
                 await github.pulls.update({ owner, repo, pull_number: pull.number, state: 'closed' });
                 continue;
               }
+
               let isDependantTicketNotDeployed = false;
               for (const issueLink of issue.fields.issuelinks) {
                 if (issueLink.type.outward == 'depends on' && issueLink.outwardIssue) {
@@ -78,22 +77,19 @@ jobs:
                                     {headers: { Authorization: `Basic ${jiraToken}` }})).data;
                   const linkedTicketPullNumber = linkedTicket.fields.customfield_10217.replace( /^\D+/g, '');
                   const linkedTicketPullData = (await github.pulls.get({ owner, repo, pull_number: linkedTicketPullNumber })).data;
-
-                  if (!linkedTicketPullData.merged) {
-                    console.info(`PR #${pull.number}: dependant on ticket is not Merged yet. SKIP.`);
-                    isDependantTicketNotDeployed = true;
-                    break;
-                  }
-
                   if (!linkedTicket.fields.resolution || linkedTicket.fields.resolution.name !== 'Accepted') {
                     console.info(`PR #${pull.number}: dependant on ticket is not Accepted yet. SKIP.`);
                     isDependantTicketNotDeployed = true;
                     break;
                   }
 
+                  if (!linkedTicketPullData.merged) {
+                    console.info(`PR #${pull.number}: dependant on ticket is not Merged yet. SKIP.`);
+                    isDependantTicketNotDeployed = true;
+                    break;
+                  }
                 }
               }
-
 
               if (isDependantTicketNotDeployed) {
                 await updateLabelToIssue(issueKey, 'add', 'pending-dependencies', pull.number);
