@@ -45,6 +45,7 @@ jobs:
               }
             });
 
+
             const pulls = (await github.pulls.list({ owner, repo, state: "open", base: "master" })).data;
             console.info(`Open PRs: ${pulls.map(p => p.number)}`);
             for (const pull of pulls) {
@@ -71,7 +72,7 @@ jobs:
                 await github.pulls.update({ owner, repo, pull_number: pull.number, state: 'closed' });
                 continue;
               }
-              let isDependantTicketNotDeployed = true;
+              let isDependantTicketNotDeployed = false;
               for (const issueLink of issue.fields.issuelinks) {
                 if (issueLink.type.outward == 'depends on' && issueLink.outwardIssue) {
                   const linkedTicket = (await axios.get(`https://rapid-engineering.atlassian.net/rest/api/latest/issue/${issueLink.outwardIssue.key}`,
