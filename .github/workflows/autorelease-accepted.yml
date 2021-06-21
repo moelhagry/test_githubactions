@@ -77,9 +77,12 @@ jobs:
 
               for (const issueLink of issue.fields.issuelinks) {
                 if (issueLink.type.outward == 'depends on' && issueLink.outwardIssue) {
-                  const linkedTicketlabels = (await axios.get(`https://rapid-engineering.atlassian.net/rest/api/latest/issue/${issueLink.outwardIssue.key}?fields=code`,
+                  const linkedTicketlabels = (await axios.get(`https://rapid-engineering.atlassian.net/rest/api/latest/issue/${issueLink.outwardIssue.key}`,
                                     {headers: { Authorization: `Basic ${jiraToken}` }})).data;
-                  console.info(linkedTicketlabels);
+                  console.info('#####');
+                  console.info(fields.resolution);
+                  console.info(fields.customfield_10217);
+
 
                 }
               }
@@ -99,6 +102,7 @@ jobs:
                 continue;
               }
 
+              console.info(pull.number);
               const pullData = (await github.pulls.get({ owner, repo, pull_number: pull.number })).data;
               if (pullData.mergeable && (pullData.mergeable_state === 'clean' || pullData.mergeable_state === 'unstable')) {
                 console.info(`PR #${pull.number}: ticket Accepted and PR is mergeable. MERGE.`);
