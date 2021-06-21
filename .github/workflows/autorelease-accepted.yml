@@ -78,24 +78,22 @@ jobs:
                                     {headers: { Authorization: `Basic ${jiraToken}` }})).data;
 
 
-                  if (!linkedTicket.fields.customfield_10217) {
-                   console.info(`PR #${pull.number}: dependant on ticket that has code field empty. SKIP.`);
-                   isDependantTicketNotDeployed = true;
-                   break;
-                 }
 
-                  const linkedTicketPullNumber = linkedTicket.fields.customfield_10217.replace( /^\D+/g, '');
-                  const linkedTicketPullData = (await github.pulls.get({ owner, repo, pull_number: linkedTicketPullNumber })).data;
                   if (!linkedTicket.fields.resolution || linkedTicket.fields.resolution.name !== 'Accepted') {
                     console.info(`PR #${pull.number}: dependant on ticket is not Accepted yet. SKIP.`);
                     isDependantTicketNotDeployed = true;
                     break;
                   }
 
-                  if (!linkedTicketPullData.merged) {
-                    console.info(`PR #${pull.number}: dependant on ticket is not Merged yet. SKIP.`);
-                    isDependantTicketNotDeployed = true;
-                    break;
+                  if (linkedTicket.fields.customfield_10217) {
+                    const linkedTicketPullNumber = linkedTicket.fields.customfield_10217.replace( /^\D+/g, '');
+                    const linkedTicketPullData = (await github.pulls.get({ owner, repo, pull_number: linkedTicketPullNumber })).data;
+
+                    if (!linkedTicketPullData.merged) {
+                      console.info(`PR #${pull.number}: dependant on ticket is not Merged yet. SKIP.`);
+                      isDependantTicketNotDeployed = true;
+                      break;
+                    }
                   }
                 }
               }
