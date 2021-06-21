@@ -71,34 +71,24 @@ jobs:
                 await github.pulls.update({ owner, repo, pull_number: pull.number, state: 'closed' });
                 continue;
               }
-
               let isDependantTicketNotDeployed = true;
-
               for (const issueLink of issue.fields.issuelinks) {
                 if (issueLink.type.outward == 'depends on' && issueLink.outwardIssue) {
                   const linkedTicket = (await axios.get(`https://rapid-engineering.atlassian.net/rest/api/latest/issue/${issueLink.outwardIssue.key}`,
                                     {headers: { Authorization: `Basic ${jiraToken}` }})).data;
-                  console.info('#####');
-                  console.info(linkedTicket.fields.resolution);
-                  console.info(linkedTicket.fields.customfield_10217);
-                  console.info(linkedTicket.fields.customfield_10217.replace( /^\D+/g, ''));
                   const linkedTicketPullNumber = linkedTicket.fields.customfield_10217.replace( /^\D+/g, '');
-                  console.info(linkedTicketPullNumber);
                   const linkedTicketPullData = (await github.pulls.get({ owner, repo, pull_number: linkedTicketPullNumber })).data;
-                  console.info(linkedTicketPullData.merged);
-                if (!linkedTicketPullData.merged) {
-                  console.info(`PR #${pull.number}: Dependant on ticket is not Merged yet. SKIP.`);
-                  isDependantTicketNotDeployed = true;
-                  break;
-                }
+                  if (!linkedTicket.fields.resolution || linkedTicket.fields.resolution.name !== 'Accepted') {
+                    console.info(`PR #${pull.number}: dependant on ticket is not Accepted yet. SKIP.`);
+                    isDependantTicketNotDeployed = true;
+                    break;
+                  }
 
-                if (!linkedTicket.fields.resolution || linkedTicket.fields.resolution.name !== 'Accepted') {
-                  console.info(`PR #${pull.number}: Dependant on ticket is not Accepted yet. SKIP.`);
-                  isDependantTicketNotDeployed = true;
-                  break;
-                }
-
-
+                  if (!linkedTicketPullData.merged) {
+                    console.info(`PR #${pull.number}: dependant on ticket is not Merged yet. SKIP.`);
+                    isDependantTicketNotDeployed = true;
+                    break;
+                  }
                 }
               }
 
@@ -117,7 +107,6 @@ jobs:
                 continue;
               }
 
-              console.info(pull.number);
               const pullData = (await github.pulls.get({ owner, repo, pull_number: pull.number })).data;
               if (pullData.mergeable && (pullData.mergeable_state === 'clean' || pullData.mergeable_state === 'unstable')) {
                 console.info(`PR #${pull.number}: ticket Accepted and PR is mergeable. MERGE.`);
