@@ -72,6 +72,7 @@ jobs:
               }
 
               let isDependantTicketNotDeployed = false;
+
               for (const issueLink of issue.fields.issuelinks) {
                 if (issueLink.type.outward == 'depends on' && issueLink.outwardIssue) {
                   const linkedTicketlabels = (await axios.get(`https://rapid-engineering.atlassian.net/rest/api/latest/issue/${issueLink.outwardIssue.key}?fields=code`,
