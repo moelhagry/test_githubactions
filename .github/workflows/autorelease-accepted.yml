@@ -76,11 +76,11 @@ jobs:
 
               for (const issueLink of issue.fields.issuelinks) {
                 if (issueLink.type.outward == 'depends on' && issueLink.outwardIssue) {
-                  const linkedTicketlabels = (await axios.get(`https://rapid-engineering.atlassian.net/rest/api/latest/issue/${issueLink.outwardIssue.key}`,
+                  const linkedTicket = (await axios.get(`https://rapid-engineering.atlassian.net/rest/api/latest/issue/${issueLink.outwardIssue.key}`,
                                     {headers: { Authorization: `Basic ${jiraToken}` }})).data;
                   console.info('#####');
-                  console.info(issueLink.fields.resolution);
-                  console.info(issueLink.fields.customfield_10217);
+                  console.info(linkedTicket.fields.resolution);
+                  console.info(linkedTicket.fields.customfield_10217);
 
 
                 }
