@@ -75,6 +75,13 @@ jobs:
                 if (issueLink.type.outward == 'depends on' && issueLink.outwardIssue) {
                   const linkedTicket = (await axios.get(`https://rapid-engineering.atlassian.net/rest/api/latest/issue/${issueLink.outwardIssue.key}`,
                                     {headers: { Authorization: `Basic ${jiraToken}` }})).data;
+
+                  if (!linkedTicket.fields.customfield_10217) {
+                   console.info(`PR #${pull.number}: dependant on ticket that has code field empty. SKIP.`);
+                   isDependantTicketNotDeployed = true;
+                   break;
+                 }
+
                   const linkedTicketPullNumber = linkedTicket.fields.customfield_10217.replace( /^\D+/g, '');
                   const linkedTicketPullData = (await github.pulls.get({ owner, repo, pull_number: linkedTicketPullNumber })).data;
                   if (!linkedTicket.fields.resolution || linkedTicket.fields.resolution.name !== 'Accepted') {
