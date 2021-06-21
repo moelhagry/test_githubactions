@@ -85,7 +85,12 @@ jobs:
                   const linkedTicketPullNumber = linkedTicket.fields.customfield_10217.replace( /^\D+/g, '');
                   console.info(linkedTicketPullNumber);
                   const linkedTicketPullData = (await github.pulls.get({ owner, repo, pull_number: linkedTicketPullNumber })).data;
-                  console.info(linkedTicketPullData);
+                  console.info(linkedTicketPullData.merged);
+                if (!linkedTicketPullData.merged) {
+                  console.info(`PR #${pull.number}: Dependant on ticket is not Merged yet. SKIP.`);
+                  isDependantTicketNotDeployed = true;
+                  break;
+                }
 
                 if (!linkedTicket.fields.resolution || linkedTicket.fields.resolution.name !== 'Accepted') {
                   console.info(`PR #${pull.number}: Dependant on ticket is not Accepted yet. SKIP.`);
