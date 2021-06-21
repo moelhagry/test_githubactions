@@ -78,13 +78,7 @@ jobs:
                   const linkedTicketlabels = (await axios.get(`https://rapid-engineering.atlassian.net/rest/api/latest/issue/${issueLink.outwardIssue.key}?fields=code`,
                                     {headers: { Authorization: `Basic ${jiraToken}` }})).data;
                   console.info(linkedTicketlabels);
-                  if (!linkedTicketlabels.includes('auto-released')) {
-                    console.info(`PR #${pull.number}: PR is dependant on ticket (${issueLink.outwardIssue.key}) which is not deployed yet. SKIP.`);
-                    isDependantTicketNotDeployed = true;
-                    await updateLabelToIssue(issueKey, 'add', 'pending-dependencies', pull.number);
 
-                    break;
-                  }
                 }
               }
 
