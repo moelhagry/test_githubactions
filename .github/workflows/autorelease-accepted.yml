@@ -65,6 +65,7 @@ jobs:
                 headers: { Authorization: `Basic ${jiraToken}` }
               })).data;
 
+              console.info(issue);
               if (issue.fields.resolution && issue.fields.resolution.name === 'Rejected') {
                 console.info(`PR #${pull.number}: ticket is Rejected. CLOSE PR.`);
                 await github.pulls.update({ owner, repo, pull_number: pull.number, state: 'closed' });
