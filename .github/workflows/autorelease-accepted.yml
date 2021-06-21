@@ -92,6 +92,7 @@ jobs:
                 }
               }
 
+
               if (isDependantTicketNotDeployed) {
                 await updateLabelToIssue(issueKey, 'add', 'pending-dependencies', pull.number);
                 continue;
