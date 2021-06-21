@@ -83,9 +83,9 @@ jobs:
                   console.info(linkedTicket.fields.customfield_10217);
                   console.info(linkedTicket.fields.customfield_10217.replace( /^\D+/g, ''));
                   const linkedTicketPullNumber = linkedTicket.fields.customfield_10217.replace( /^\D+/g, '');
-                  const linkedTicketPullData = (await github.pulls.get({ owner, repo, pull_number: linkedTicket.fields.customfield_10217 })).data;
+                  console.info(linkedTicketPullNumber);
+                  const linkedTicketPullData = (await github.pulls.get({ owner, repo, pull_number: linkedTicketPullNumber })).data;
                   console.info(linkedTicketPullData);
-
 
                 if (!linkedTicket.fields.resolution || linkedTicket.fields.resolution.name !== 'Accepted') {
                   console.info(`PR #${pull.number}: Dependant on ticket is not Accepted yet. SKIP.`);
