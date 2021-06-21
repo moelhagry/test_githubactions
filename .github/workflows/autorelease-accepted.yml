@@ -72,7 +72,7 @@ jobs:
                 continue;
               }
 
-              let isDependantTicketNotDeployed = false;
+              let isDependantTicketNotDeployed = true;
 
               for (const issueLink of issue.fields.issuelinks) {
                 if (issueLink.type.outward == 'depends on' && issueLink.outwardIssue) {
