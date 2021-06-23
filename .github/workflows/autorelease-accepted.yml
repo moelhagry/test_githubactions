@@ -65,6 +65,10 @@ jobs:
                 headers: { Authorization: `Basic ${jiraToken}` }
               })).data;
 
+
+              console.info(owner+'/'+repo+'/'+pull.number);
+              console.info('************');
+
               if (issue.fields.resolution && issue.fields.resolution.name === 'Rejected') {
                 console.info(`PR #${pull.number}: ticket is Rejected. CLOSE PR.`);
                 await github.pulls.update({ owner, repo, pull_number: pull.number, state: 'closed' });
@@ -76,6 +80,8 @@ jobs:
                 if (issueLink.type.outward == 'depends on' && issueLink.outwardIssue) {
                   const linkedTicket = (await axios.get(`https://rapid-engineering.atlassian.net/rest/api/latest/issue/${issueLink.outwardIssue.key}`,
                                     {headers: { Authorization: `Basic ${jiraToken}` }})).data;
+
+
 
 
 
