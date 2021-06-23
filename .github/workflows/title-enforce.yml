@@ -64,7 +64,7 @@ jobs:
                 console.info(pullRequestLink);
                 if (issue.fields.customfield_10217.includes(pullRequestLink)) {
                   console.info('string included');
-                  const searchIssues = (await axios.get(`https://rapid-engineering.atlassian.net/rest/api/latest/search?cql=cf[10217]~"${pullRequestLink}"`, {
+                  const searchIssues = (await axios.get(`https://rapid-engineering.atlassian.net/rest/api/latest/search?cql=customfield_10217~"${pullRequestLink}"`, {
                                          headers: { Authorization: `Basic ${jiraToken}` }})).data;
 
                   console.info('s1');
