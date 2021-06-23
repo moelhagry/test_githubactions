@@ -69,6 +69,7 @@ jobs:
                   console.info(searchIssues.total);
                   console.info(searchIssues.issues[0].key);
 
+
                   if (searchIssues.total != 1) {
                     console.info('More than 1 ticket on jira refear to the same pull request ');
                   }
