@@ -37,7 +37,6 @@ jobs:
       - uses: actions/github-script@v4
         with:
           github-token: ${{secrets.LAMBDA_TOKEN}}
-          script: |
-            console.info('check 1');
+          script: console.info('check 1');
 
-          - run: exit 0
+      - run: exit 0
