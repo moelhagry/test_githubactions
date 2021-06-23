@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/github-script@v4
         with:
-          github-token: ${{secrets.LAMBDA_TOKEN}}
+          github-token: ${{secrets.GITHUB_TOKEN}} #should be modified to LAMBDA_TOKEN
           script: |
             console.info('testing script integration');
 
