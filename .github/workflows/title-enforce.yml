@@ -58,6 +58,10 @@ jobs:
                 headers: { Authorization: `Basic ${jiraToken}` }})).data;
               if (issue.fields.customfield_10217) {
                 const pullRequestLink = `https://github.com/${owner}/${repo}/pull/${process.env.PR_NUMBER}`;
+                console.info('str1');
+                console.info(issue.fields.customfield_10217);
+                console.info('str2');
+                console.info(pullRequestLink);
                 if (issue.fields.customfield_10217.includes(pullRequestLink)) {
                   console.info('string included');
                   const searchIssues = (await axios.get(`https://rapid-engineering.atlassian.net/rest/api/latest/search?jql=cf[10217]="${pullRequestLink}"`, {
@@ -66,7 +70,7 @@ jobs:
                   console.info(searchIssues.issues[0].key);
 
                   if (searchIssues.total != 1) {
-                    //no ticket has pull request or more than one ticket has it
+                    console.info('More than 1 ticket on jira refear to the same pull request ');
                   }
                 } else {
                   console.info('not included in the string');
