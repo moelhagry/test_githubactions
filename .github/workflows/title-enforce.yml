@@ -69,7 +69,7 @@ jobs:
                 }
 
               const searchIssues = (await axios.get(`https://rapid-engineering.atlassian.net/rest/api/latest/search?jql=cf[10020]="${pullRequestLink}"`, {
-                                     headers: { Authorization: `Basic ${jiraToken}` }})).data;
+                                     headers: { Authorization: `Basic ${jiraToken}` }}));
               console.info(searchIssues);
 
               } else {
