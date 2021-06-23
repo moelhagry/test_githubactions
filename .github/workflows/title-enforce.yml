@@ -22,7 +22,7 @@ jobs:
             const prNumberRegex = new RegExp('(.+pull\/)(\d+)(.*)', 'gim');
             const {owner, repo} = context.repo;
             const jiraToken = Buffer.from("${{secrets.JIRA_MILOS_AUTH}}").toString('base64');
-
+            console.info(`${owner}\${repo}`);
 
       - uses: actions/github-script@v3
         id: get-title
