@@ -70,7 +70,6 @@ jobs:
                   console.info('s1');
                   console.info(searchIssues);
                   console.info('s2');
-                  console.info(searchIssues.data.errorMessages);
                   console.info(searchIssues.total);
                   console.info(searchIssues.issues[0].key);
 
