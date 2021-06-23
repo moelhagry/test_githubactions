@@ -22,6 +22,7 @@ jobs:
             const axios = require("axios");
             const nodemailer = require("nodemailer");
             const jiraKeyRegex = new RegExp('LAMBDA-[0-9]+', 'gim');
+            console.info(context);
             const {owner, repo} = context.repo;
             const jiraToken = Buffer.from("${{secrets.JIRA_MILOS_AUTH}}").toString('base64');
             console.info(`${owner}/${repo}`);
