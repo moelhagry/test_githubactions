@@ -14,6 +14,7 @@ jobs:
       - uses: actions/github-script@v4
         env:
           PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }} #should be modified to LAMBDA_TOKEN
           script: |
@@ -21,10 +22,10 @@ jobs:
             const axios = require("axios");
             const nodemailer = require("nodemailer");
             const jiraKeyRegex = new RegExp('LAMBDA-[0-9]+', 'gim');
-            const prNumberRegex = new RegExp('(.+pull\/)(\d+)(.*)', 'gim');
             const {owner, repo} = context.repo;
             const jiraToken = Buffer.from("${{secrets.JIRA_MILOS_AUTH}}").toString('base64');
             console.info(`${owner}/${repo}`);
+            console.info(process.env);
             const matches = pull.title.match(jiraKeyRegex);
             if (matches) {
               const issueKey = matches[0];
@@ -32,7 +33,7 @@ jobs:
                               headers: { Authorization: `Basic ${jiraToken}` }})).data;
               console.info(issue);
               console.info('***********');
-              console.log(process.env);
+
 
             } else {
               console.info('Rejection cause we could not reach jira ticket ');
