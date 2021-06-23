@@ -49,14 +49,17 @@ jobs:
             console.info(`Open PRs: ${pulls.map(p => p.number)}`);
             for (const pull of pulls) {
               const matches = pull.title.match(regex);
+            console.info(owner+'/'+repo+'/'+pull.number);
+            console.info('************');
+
+
               if (!matches) {
                 console.info(`PR #${pull.number}: title does not contain a ticket key. SKIP.`);
                 continue;
               }
 
 
-              console.info(owner+'/'+repo+'/'+pull.number);
-              console.info('************');
+
 
 
               const labels = await github.issues.listLabelsOnIssue({ owner, repo, issue_number: pull.number });
