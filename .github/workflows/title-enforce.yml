@@ -9,7 +9,7 @@ jobs:
     if: ${{github.event.pull_request.user.type != 'Bot'}}
     steps:
       - name: install npm packages
-        run: npm i axios, nodemailer
+        run: npm i axios nodemailer
 
       - uses: actions/github-script@v4
         with:
