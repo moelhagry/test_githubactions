@@ -25,8 +25,7 @@ jobs:
             const {owner, repo} = context.repo;
             const jiraToken = Buffer.from("${{secrets.JIRA_MILOS_AUTH}}").toString('base64');
             console.info(`${owner}/${repo}`);
-            console.info(process.env);
-            const matches = pull.title.match(jiraKeyRegex);
+            const matches = process.env.PR_TITLE.match(jiraKeyRegex);
             if (matches) {
               const issueKey = matches[0];
               const issue = (await axios.get(`https://rapid-engineering.atlassian.net/rest/api/latest/issue/${issueKey}`, {
