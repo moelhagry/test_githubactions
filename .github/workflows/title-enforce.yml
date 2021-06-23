@@ -1,7 +1,6 @@
 name: PR title must contain JIRA issue key. Status of the issue must be [In Progress] or [Ready for QC]
 on:
   pull_request:
-    types: [opened, edited, reopened, synchronize]
 jobs:
   title-enforce:
     name: PR title enforce
