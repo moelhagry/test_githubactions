@@ -39,4 +39,5 @@ jobs:
           github-token: ${{secrets.LAMBDA_TOKEN}}
           script: console.info('check 1');
 
+
       - run: exit 0
