@@ -2,6 +2,7 @@ name: PR title must contain JIRA issue key. Status of the issue must be [In Prog
 on:
   pull_request:
     types: [opened, edited, reopened, synchronize]
+  push:
 jobs:
   title-enforce:
     name: PR title enforce
