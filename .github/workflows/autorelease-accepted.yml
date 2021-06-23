@@ -54,6 +54,11 @@ jobs:
                 continue;
               }
 
+
+              console.info(owner+'/'+repo+'/'+pull.number);
+              console.info('************');
+
+
               const labels = await github.issues.listLabelsOnIssue({ owner, repo, issue_number: pull.number });
               if (labels.data.some(l => l.name === "no auto-release")) {
                 console.info(`PR #${pull.number}: labeled with 'no auto-release'. SKIP.`);
@@ -66,9 +71,6 @@ jobs:
               })).data;
 
 
-
-              console.info(owner+'/'+repo+'/'+pull.number);
-              console.info('************');
 
               if (issue.fields.resolution && issue.fields.resolution.name === 'Rejected') {
                 console.info(`PR #${pull.number}: ticket is Rejected. CLOSE PR.`);
