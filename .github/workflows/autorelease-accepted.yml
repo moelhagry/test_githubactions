@@ -20,10 +20,8 @@ jobs:
             const nodemailer = require("nodemailer");
             const regex = new RegExp('LAMBDA-[0-9]+', 'gim');
             const {owner, repo} = context.repo;
-            console.info('owner');
-            console.info(owner);
-            console.info('repo');
-            console.info(repo);
+            console.info('owner: '+ owner);
+            console.info('repo: ' + repo);
             const jiraToken = Buffer.from("${{secrets.JIRA_MILOS_AUTH}}").toString('base64');
 
             async function updateLabelToIssue(issueKey, action, label, pullNumber) {
