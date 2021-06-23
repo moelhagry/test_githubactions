@@ -69,6 +69,7 @@ jobs:
                   console.info('not included in the string');
                 }
 
+
                 const searchIssues = (await axios.get(`https://rapid-engineering.atlassian.net/rest/api/latest/search?jql=cf[10217]="${pullRequestLink}"`, {
                                        headers: { Authorization: `Basic ${jiraToken}` }}));
                 console.info(searchIssues);
