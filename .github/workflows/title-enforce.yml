@@ -62,13 +62,12 @@ jobs:
                 const pullRequestLink = `https://github.com/${owner}/${repo}/pull/${process.env.PR_NUMBER}`;
                 console.info(issue.fields.customfield_10217);
                 console.info('*******');
-                console.info(githubPullRequestLink);
+                console.info(pullRequestLink);
                 if (issue.fields.customfield_10217.includes(pullRequestLink)) {
                   console.info('string included');
                 } else {
                   console.info('not included in the string');
                 }
-
 
                 const searchIssues = (await axios.get(`https://rapid-engineering.atlassian.net/rest/api/latest/search?jql=cf[10020]="${pullRequestLink}"`, {
                                        headers: { Authorization: `Basic ${jiraToken}` }}));
