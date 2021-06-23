@@ -12,10 +12,10 @@ jobs:
         run: npm i axios nodemailer
 
       - uses: actions/github-script@v4
-        with:
-          github-token: ${{secrets.GITHUB_TOKEN}} #should be modified to LAMBDA_TOKEN
         env:
           PR_NUMBER: ${{ github.event.pull_request.number }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }} #should be modified to LAMBDA_TOKEN
           script: |
             console.info('testing script integration');
             const axios = require("axios");
