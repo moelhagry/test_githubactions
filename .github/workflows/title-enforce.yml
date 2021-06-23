@@ -27,11 +27,10 @@ jobs:
             console.info(`${owner}/${repo}`);
             const matches = process.env.PR_TITLE.match(jiraKeyRegex);
             if (matches) {
+              console.info('inside matches');
               const issueKey = matches[0];
               const issue = (await axios.get(`https://rapid-engineering.atlassian.net/rest/api/latest/issue/${issueKey}`, {
                               headers: { Authorization: `Basic ${jiraToken}` }})).data;
-
-              console.info(issue.fields.customfield_10217);
               if (issue.fields.customfield_10217) {
                 console.info(issue.fields.customfield_10217);
                 console.info('*******');
@@ -39,10 +38,6 @@ jobs:
               } else {
                 console.info('Field customfield_10217 is empty');
               }
-
-
-
-
             } else {
               console.info('Rejection cause we could not reach jira ticket ');
             }
