@@ -35,7 +35,6 @@ jobs:
           exit 2
 
       - uses: actions/github-script@v4
-          id: set-result
           with:
             github-token: ${{secrets.LAMBDA_TOKEN}}
             script: |
