@@ -33,4 +33,7 @@ jobs:
         run: |
           echo 'Status of the issue ${{steps.get-issue-key.outputs.first_match}} must be [In Progress], [Ready for QC] or [In QC]'
           exit 2
+
+      - script: |
+          console.info('test');
       - run: exit 0
