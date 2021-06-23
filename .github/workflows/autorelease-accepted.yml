@@ -49,7 +49,7 @@ jobs:
             console.info(`Open PRs: ${pulls.map(p => p.number)}`);
             for (const pull of pulls) {
               const matches = pull.title.match(regex);
-            console.info(owner+'/'+repo+'/'+pull.number);
+            console.info(owner+'/'+repo+'/pull/'+pull.number);
             console.info('************');
 
 
