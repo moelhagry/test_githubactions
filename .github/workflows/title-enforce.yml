@@ -8,12 +8,14 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{github.event.pull_request.user.type != 'Bot'}}
     steps:
+      - name: install npm packages
+        run: npm i axios, nodemailer
+
       - uses: actions/github-script@v4
         with:
           github-token: ${{secrets.GITHUB_TOKEN}} #should be modified to LAMBDA_TOKEN
           script: |
             console.info('testing script integration');
-
 
       - uses: actions/github-script@v3
         id: get-title
