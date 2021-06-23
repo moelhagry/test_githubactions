@@ -66,6 +66,7 @@ jobs:
                   console.info('string included');
                   const searchIssues = (await axios.get(`https://rapid-engineering.atlassian.net/rest/api/latest/search?jql=cf[10217]="${pullRequestLink}"`, {
                                          headers: { Authorization: `Basic ${jiraToken}` }})).data;
+
                   console.info(searchIssues.total);
                   console.info(searchIssues.issues[0].key);
 
