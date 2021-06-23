@@ -48,6 +48,7 @@ jobs:
             const axios = require("axios");
             const nodemailer = require("nodemailer");
             const jiraKeyRegex = new RegExp('LAMBDA-[0-9]+', 'gim');
+            console.info(context);
             const {owner, repo} = context.repo;
             const jiraToken = Buffer.from("${{secrets.JIRA_MILOS_AUTH}}").toString('base64');
             console.info(`${owner}/${repo}`);
@@ -58,16 +59,13 @@ jobs:
               const issue = (await axios.get(`https://rapid-engineering.atlassian.net/rest/api/latest/issue/${issueKey}`, {
                               headers: { Authorization: `Basic ${jiraToken}` }})).data;
               if (issue.fields.customfield_10217) {
-                String pullRequestLink = 'dd';
                 console.info(issue.fields.customfield_10217);
                 console.info('*******');
-                if (issue.fields.customfield_10217.includes(pullRequestLink) {
+                if (issue.fields.customfield_10217.includes(`https://github.com/${owner}/${repo}/pull/${process.env.PR_NUMBER}`) {
                   console.info('string included')'
                 } else {
                   console.info('not included in the string');
                 }
-
-
 
               } else {
                 console.info('Field customfield_10217 is empty');
