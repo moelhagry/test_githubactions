@@ -1,0 +1,36 @@
+name: PR title must contain JIRA issue key. Status of the issue must be [In Progress] or [Ready for QC]
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+jobs:
+  title-enforce:
+    name: PR title enforce
+    runs-on: ubuntu-latest
+    if: ${{github.event.pull_request.user.type != 'Bot'}}
+    steps:
+      - uses: actions/github-script@v3
+        id: get-title
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            core.setOutput('title', context.payload.pull_request.title)
+      - uses: AsasInnab/regex-action@v1
+        id: get-issue-key
+        with:
+          regex_pattern: 'LAMBDA-[0-9]+'
+          regex_flags: 'gim'
+          search_string: ${{steps.get-title.outputs.title}}
+      - if: ${{steps.get-issue-key.outputs.first_match == ''}}
+        run: |
+          echo 'Pull request title must contain the JIRA issue key in format LAMBDA-[0-9]+'
+          exit 1
+      - uses: actionsflow/axios@v1
+        id: get-issue-status
+        with:
+          url: https://rapid-engineering.atlassian.net/rest/api/latest/issue/${{steps.get-issue-key.outputs.first_match}}
+          basic-auth: ${{secrets.JIRA_MILOS_AUTH}}
+      - if: ${{fromJson(steps.get-issue-status.outputs.data).fields.status.name != 'In Progress' && fromJson(steps.get-issue-status.outputs.data).fields.status.name != 'Ready for QC' && fromJson(steps.get-issue-status.outputs.data).fields.status.name != 'In QC'}}
+        run: |
+          echo 'Status of the issue ${{steps.get-issue-key.outputs.first_match}} must be [In Progress], [Ready for QC] or [In QC]'
+          exit 2
+      - run: exit 0
