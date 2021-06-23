@@ -34,10 +34,4 @@ jobs:
           echo 'Status of the issue ${{steps.get-issue-key.outputs.first_match}} must be [In Progress], [Ready for QC] or [In QC]'
           exit 2
 
-      - uses: actions/github-script@v4
-        with:
-          github-token: ${{secrets.LAMBDA_TOKEN}}
-          script: console.info('check 1');
-
-
       - run: exit 0
