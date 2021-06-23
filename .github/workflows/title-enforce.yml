@@ -61,6 +61,11 @@ jobs:
               if (issue.fields.customfield_10217) {
                 console.info(issue.fields.customfield_10217);
                 console.info('*******');
+                if (issue.fields.customfield_10217.includes(`https://github.com/${owner}/${repo}/pull/${process.env.PR_NUMBER}`) {
+                  console.info('string included')'
+                } else {
+                  console.info('not included in the string');
+                }
 
               } else {
                 console.info('Field customfield_10217 is empty');
