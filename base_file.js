@@ -2,6 +2,6 @@ console.info('test basefile');
 
 check2
 
-check
-check 2
+check 4
+check 3
 
