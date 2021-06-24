@@ -2,6 +2,7 @@ name: PR title must contain JIRA issue key. Status of the issue must be [In Prog
 on:
   pull_request:
     types: [opened, edited, reopened, synchronize]
+
 jobs:
   title-enforce:
     name: PR title enforce
@@ -14,28 +15,25 @@ jobs:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
             core.setOutput('title', context.payload.pull_request.title)
-            console.info(context.payload.pull_request);
-            console.info(context.payload.pull_request.base.label);
-            console.info(context.payload.pull_request.base.ref);
-            console.info('@@@@@');
 
-            console.info(context.payload.pull_request.head.label);
-            console.info(context.payload.pull_request.head.ref);
       - uses: AsasInnab/regex-action@v1
         id: get-issue-key
         with:
           regex_pattern: 'LAMBDA-[0-9]+'
           regex_flags: 'gim'
           search_string: ${{steps.get-title.outputs.title}}
+
       - if: ${{steps.get-issue-key.outputs.first_match == ''}}
         run: |
           echo 'Pull request title must contain the JIRA issue key in format LAMBDA-[0-9]+'
           exit 1
+
       - uses: actionsflow/axios@v1
         id: get-issue-status
         with:
           url: https://rapid-engineering.atlassian.net/rest/api/latest/issue/${{steps.get-issue-key.outputs.first_match}}
           basic-auth: ${{secrets.JIRA_MILOS_AUTH}}
+
       - if: ${{fromJson(steps.get-issue-status.outputs.data).fields.status.name != 'In Progress' && fromJson(steps.get-issue-status.outputs.data).fields.status.name != 'Ready for QC' && fromJson(steps.get-issue-status.outputs.data).fields.status.name != 'In QC'}}
         run: |
           echo 'Status of the issue ${{steps.get-issue-key.outputs.first_match}} must be [In Progress], [Ready for QC] or [In QC]'
@@ -56,47 +54,34 @@ jobs:
             const jiraKeyRegex = new RegExp('LAMBDA-[0-9]+', 'gim');
             const {owner, repo} = context.repo;
             const jiraToken = Buffer.from("${{secrets.JIRA_MILOS_AUTH}}").toString('base64');
-            console.info(`${owner}/${repo}`);
             const matches = process.env.PR_TITLE.match(jiraKeyRegex);
             if (matches) {
-              console.info('inside matches');
               const issueKey = matches[0];
               const issue = (await axios.get(`https://rapid-engineering.atlassian.net/rest/api/latest/issue/${issueKey}`, {
                 headers: { Authorization: `Basic ${jiraToken}` }})).data;
               if (issue.fields.customfield_10217) {
                 const pullRequestLink = `https://github.com/${owner}/${repo}/pull/${process.env.PR_NUMBER}`;
-                console.info('str1');
-                console.info(issue.fields.customfield_10217);
-                console.info('str2');
-                console.info(pullRequestLink);
+                console.info(`Code Field = ${issue.fields.customfield_10217}`);
                 if (issue.fields.customfield_10217.includes(pullRequestLink)) {
-                  console.info('string included');
-                  const searchIssues = (await axios.get(`https://rapid-engineering.atlassian.net/rest/api/latest/search?cql=cf[10217] ~ "${pullRequestLink}"`, {
+                  const jql = `cf[10217]="${pullRequestLink}" OR cf[10217]="${pullRequestLink}/commits" ` +
+                              `OR cf[10217]="${pullRequestLink}/checks" OR cf[10217]="${pullRequestLink}/files"`;
+                  const searchIssues = (await axios.get(`https://rapid-engineering.atlassian.net/rest/api/latest/search?jql=${jql}`, {
                                          headers: { Authorization: `Basic ${jiraToken}` }})).data;
-
-                  console.info('s1');
-                  console.info(searchIssues);
-                  console.info('s2');
-                  console.info(searchIssues.total);
-                  console.info(searchIssues.issues[0].key);
-
-
                   if (searchIssues.total != 1) {
-                    console.info('More than 1 ticket on jira refear to the same pull request ');
+                    console.info(`PR #${process.env.PR_NUMBER}: More than 1 ticket refers to the same pull request.`);
+                    process.exit(3);
                   }
                 } else {
-                  console.info('not included in the string');
+                  console.info(`PR #${process.env.PR_NUMBER}: The code field does not point to the Pull Request.`);
+                  process.exit(4);
                 }
-
-
-
-
               } else {
-                console.info('Field customfield_10217 is empty');
+                console.info(`PR #${process.env.PR_NUMBER}: The code field is empty.`);
+                process.exit(5);
               }
             } else {
-              console.info('Rejection cause we could not reach jira ticket ');
+              console.info('Could not extract the jira ticket number.');
+              process.exit(6);
             }
-
 
       - run: exit 0
