@@ -8,12 +8,18 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{github.event.pull_request.user.type != 'Bot'}}
     steps:
-      - uses: actions/github-script@v3
+      - uses: actions/github-script@v4
         id: get-title
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
             core.setOutput('title', context.payload.pull_request.title)
+            console.info(context.payload.pull_request);
+            console.info(context.payload.pull_request.base.label);
+            console.info(context.payload.pull_request.base.ref);
+            console.info('@@@@@');
+            console.info(context.payload.pull_request.head.label);
+            console.info(context.payload.pull_request.head.ref);
       - uses: AsasInnab/regex-action@v1
         id: get-issue-key
         with:
