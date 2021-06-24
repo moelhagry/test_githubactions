@@ -1,9 +1,55 @@
-name: Rebase Pull Requests
+name: Autoupdate branches on changes to master
 on:
   push:
     branches: [master]
+  pull_request:
+    types: [unlabeled]
+  workflow_dispatch:
 jobs:
-  rebase:
+  autoupdate-branches:
     runs-on: ubuntu-latest
     steps:
-      - uses: linhbn123/rebase-pull-requests@v1.0.1
+      - uses: actions/github-script@v4
+        id: set-result
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const cantBeUpdatedComment = "Auto-update of branch from master failed. Please resolve merge conflicts manually.";
+            const {owner, repo} = context.repo;
+            const pulls = await github.pulls.list({ owner, repo, state: "open", base: "master" });
+            for (const pull of pulls.data) {
+              const labels = await github.issues.listLabelsOnIssue({ owner, repo, issue_number: pull.number });
+              if (labels.data.some(l => l.name === "no auto-update")) {
+                console.info(`PR #${pull.number} is labeled with 'no auto-update'. Skip.`);
+                continue;
+              }
+              console.info(pull.head.ref);
+              console.info(pull.base.ref);
+
+              const compare = await github.repos.compareCommits({ owner, repo, base: pull.head.ref, head: pull.base.ref });
+              console.info(compare);
+              console.info('#####');
+              if (compare.data.files.length > 0) {
+                try {
+                  console.info(`PR #${pull.number}. Try to update.`);
+                  await github.pulls.updateBranch({ owner, repo, pull_number: pull.number });
+                } catch (e) {
+                  console.error(`PR #${pull.number} can't be updated. Leave a comment.`, e);
+                  let lastAction, timeline = [], page = 1;
+                  do {
+                    const timeline = await github.issues.listEventsForTimeline({ owner, repo, issue_number: pull.number, per_page: 100, page });
+                    if (timeline.data && timeline.data.length > 0) {
+                      lastAction = timeline.data[timeline.data.length - 1];
+                    }
+                    page++;
+                  } while (timeline.data && timeline.data.length > 0);
+                  if (lastAction && lastAction.event && lastAction.event === "commented" && lastAction.body === cantBeUpdatedComment) {
+                    console.info(`PR #${pull.number} is already commented.`);
+                  } else {
+                    await github.issues.createComment({ owner, repo, issue_number: pull.number, body: cantBeUpdatedComment });
+                  }
+                }
+              } else {
+                console.info(`PR #${pull.number} is already up-to-date. Skip.`);
+              }
+            }
