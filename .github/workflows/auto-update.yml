@@ -23,7 +23,12 @@ jobs:
                 console.info(`PR #${pull.number} is labeled with 'no auto-update'. Skip.`);
                 continue;
               }
+              console.info(pull.head.ref);
+              console.info(pull.base.ref);
+
               const compare = await github.repos.compareCommits({ owner, repo, base: pull.head.ref, head: pull.base.ref });
+              console.info(compare);
+              console.info('#####');
               if (compare.data.files.length > 0) {
                 try {
                   console.info(`PR #${pull.number}. Try to update.`);
