@@ -3,6 +3,7 @@ on:
   pull_request:
 jobs:
   title-enforce:
+
     name: PR title enforce
     runs-on: ubuntu-latest
     if: ${{github.event.pull_request.user.type != 'Bot'}}
