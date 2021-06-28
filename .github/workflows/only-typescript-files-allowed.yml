@@ -36,11 +36,26 @@ jobs:
 
       - uses: actions/github-script@v4
         env:
-          FILES_OUTPUT: ${{ steps.files.outputs.added_modified }}
+          ADDED_FILES: ${{ steps.files.outputs.added }}
+          MODIFIED_FILES: ${{ steps.files.outputs.modified }}
+          REMOVED_FILES: ${{ steps.files.outputs.removed }}
+          RENAMED_FILES: ${{ steps.files.outputs.renamed }}
+
+
         with:
           script: |
-            console.info(process.env.FILES_OUTPUT);
+            console.info('Added Files');
+            console.info(process.env.ADDED_FILES);
             console.info('$$$$$$$$$');
+            console.info('Modified Files');
+            console.info(process.env.MODIFIED_FILES);
+            console.info('$$$$$$');
+            console.info('Removed Files');
+            console.info(process.env.REMOVED_FILES);
+            console.info('$$$$$$$$');
+            console.info('Renamed Files');
+            console.info(process.env.RENAMED_FILES);
+
 
 
           
