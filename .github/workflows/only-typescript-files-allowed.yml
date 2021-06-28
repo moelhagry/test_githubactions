@@ -58,6 +58,7 @@ jobs:
             	console.info(file);
                 if (file.endsWith('.js')){
                 console.info('The file is javascript');
+                console.info(file.slice(file.length - 3);
               }
             });
 
