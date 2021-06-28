@@ -33,7 +33,7 @@ jobs:
 
       - uses: actions/github-script@v4
         env:
-          FILES_OUTPUT: ${{ steps.files.outputs }}
+          FILES_OUTPUT: ${{ steps.files.outputs.added_modified }}
         with:
           script: |
             console.info(process.env.FILES_OUTPUT);
