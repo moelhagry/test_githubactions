@@ -37,5 +37,5 @@ jobs:
         with:
           format: 'json'
       - name: Print modified files
-        run: echo ${{ steps.files.outputs.added_modified }}
+        run: echo ${{ steps.files.outputs }}
           
