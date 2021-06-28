@@ -1,0 +1,58 @@
+name: Only Typescript files allowed
+on: [pull_request, push]
+jobs:
+  Verify-Changeset-Code-Type:
+    name: Check there are no Javascript files in the changeset
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the branch
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+          path: current
+      - id: files
+        uses: jitterbit/get-changed-files@v1
+        with:
+          format: 'csv'
+      - name: Print modified files
+        run: echo ${{ steps.files.outputs.added_modified }}
+      - name: Get extensions of changed files
+        if: "contains(format('{0},',steps.files.outputs.added_modified), 'js,')"
+        run: |
+          echo .js files detected
+          exit 1
+
+  Typescript-renaming-is-correct:
+    name: Check that typescript renaming is mapped correctly
+    runs-on: ubuntu-latest
+    steps:
+      - id: files
+        uses: jitterbit/get-changed-files@v1
+        with:
+          format: 'json'
+
+      - name: Print files
+        run: echo ${{ steps.files.outputs }}
+
+      - uses: actions/github-script@v4
+        env:
+          ADDED_MODIFIED_FILES: ${{ steps.files.outputs.added_modified }}
+          REMOVED_FILES: ${{ steps.files.outputs.removed }}
+          RENAMED_FILES: ${{ steps.files.outputs.renamed }}
+        with:
+          script: |
+            const removedFiles = JSON.parse(process.env.REMOVED_FILES);
+            const addedORModifiedFiles = JSON.parse(process.env.ADDED_MODIFIED_FILES);
+            removedFiles.forEach(file => {
+            	console.info(file);
+                if (file.endsWith('.js')){
+                console.info('The file is javascript');
+                const fileName = file.slice(0, file.length - 3);
+                if (addedORModifiedFiles.includes(`${fileName}.ts`)) {
+                  console.info(addedORModifiedFiles);
+                  console.info(`${fileName}.ts`);
+                  console.info('Wrong classification of a .js rename to .ts');
+                  process.exit(1);
+                }
+              }
+            });
