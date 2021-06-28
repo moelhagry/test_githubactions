@@ -40,7 +40,7 @@ jobs:
           exit 2
 
       - name: install npm packages
-        run: npm i axios nodemailer
+        run: npm i axios
 
       - uses: actions/github-script@v4
         env:
@@ -51,11 +51,10 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }} #should be modified to LAMBDA_TOKEN
           script: |
             const axios = require("axios");
-            const nodemailer = require("nodemailer");
             const {owner, repo} = context.repo;
             const jiraToken = Buffer.from("${{secrets.JIRA_MILOS_AUTH}}").toString('base64');
             const issueKey = process.env.ISSUE_KEY;
-            const issue = (await axios.get(`https://rapid-engineering.atlassian.net/rest/api/latest/issue/${issueKey}`, {
+            const issue = (await axios.get(`https://rapid-engineering.atlassian.net/rest/api/latest/issue/${ issueKey }`, {
               headers: { Authorization: `Basic ${jiraToken}` }})).data;
             if (issue.fields.customfield_10217) {
               const pullRequestLink = `https://github.com/${owner}/${repo}/pull/${process.env.PR_NUMBER}`;
@@ -63,17 +62,17 @@ jobs:
               if (issue.fields.customfield_10217.includes(pullRequestLink)) {
                 const jql = `cf[10217]="${pullRequestLink}" OR cf[10217]="${pullRequestLink}/commits" ` +
                             `OR cf[10217]="${pullRequestLink}/checks" OR cf[10217]="${pullRequestLink}/files"`;
-                const searchIssues = (await axios.get(`https://rapid-engineering.atlassian.net/rest/api/latest/search?jql=${jql}`, {
+                const searchIssues = (await axios.get(`https://rapid-engineering.atlassian.net/rest/api/latest/search?jql=${ jql }`, {
                                        headers: { Authorization: `Basic ${jiraToken}` }})).data;
                 if (searchIssues.total != 1) {
-                  console.info(`PR #${process.env.PR_NUMBER}: More than 1 ticket refers to the same pull request.`);
+                  console.info(`PR #${ process.env.PR_NUMBER }: More than 1 ticket refers to the same pull request.`);
                   process.exit(3);
                 }
               } else {
-                console.info(`PR #${process.env.PR_NUMBER}: The code field does not point to the Pull Request.`);
+                console.info(`PR #${ process.env.PR_NUMBER }: The code field does not point to the Pull Request.`);
                 process.exit(4);
               }
             } else {
-              console.info(`PR #${process.env.PR_NUMBER}: The code field is empty.`);
+              console.info(`PR #${ process.env.PR_NUMBER }: The code field is empty.`);
               process.exit(5);
             }
