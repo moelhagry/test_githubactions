@@ -51,7 +51,8 @@ jobs:
                 console.info('The file is javascript');
                 const fileName = file.slice(0, file.length - 3);
                 if (addedFiles.includes(`${fileName}.ts`)) {
-                  console.info('removed file do exist as ts in added files');
+                  console.info('Wrong classification of a .js rename to .ts');
+                  System.exit(1);
                 }
 
               }
