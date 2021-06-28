@@ -27,15 +27,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-
-      - uses: actions/github-script@v4
-        with:
-          script: |
-            console.info('check');
       - id: files
         uses: jitterbit/get-changed-files@v1
         with:
           format: 'json'
-      - name: Print modified files
-        run: echo ${{ steps.files.outputs }}
+      - uses: actions/github-script@v4
+        env:
+          FILES_OUTPUT: ${{ steps.files.outputs }}
+        with:
+          script: |
+            console.info(process.env.FILES_OUTPUT);
+            console.info('$$$$$$$$$');
+
+
+
           
