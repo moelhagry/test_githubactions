@@ -58,7 +58,11 @@ jobs:
             	console.info(file);
                 if (file.endsWith('.js')){
                 console.info('The file is javascript');
-                console.info(file.slice(0, file.length - 3));
+                const fileName = file.slice(0, file.length - 3);
+                if (addedFiles.includes(`${fileName}.ts`)) {
+                  console.info('removed file do exist as ts in added files');
+                }
+
               }
             });
 
