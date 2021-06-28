@@ -58,9 +58,13 @@ jobs:
             console.info(process.env.RENAMED_FILES);
 
             const removedFiles = JSON.parse(process.env.REMOVED_FILES);
+            const addedFiles = JSON.parse(process.env.ADDED_FILES);
             console.info('print removed files');
             removedFiles.forEach(file => {
             	console.info(file);
+                if (file.endsWith('.js)){
+                console.info('The file is javascript');
+              }
             });
 
 
