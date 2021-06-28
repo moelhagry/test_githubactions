@@ -1,7 +1,7 @@
 name: PR title must contain JIRA issue key. Status of the issue must be [In Progress] or [Ready for QC]
 on:
   pull_request:
-    types: [opened, edited, reopened, synchronize]
+    types: [ opened, edited, reopened, synchronize ]
 
 jobs:
   title-enforce:
@@ -77,6 +77,3 @@ jobs:
               console.info(`PR #${process.env.PR_NUMBER}: The code field is empty.`);
               process.exit(5);
             }
-          }
-
-      - run: exit 0
