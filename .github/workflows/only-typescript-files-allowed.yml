@@ -52,7 +52,7 @@ jobs:
                 const fileName = file.slice(0, file.length - 3);
                 if (addedFiles.includes(`${fileName}.ts`)) {
                   console.info('Wrong classification of a .js rename to .ts');
-                  System.exit(1);
+                  process.exit(1);
                 }
 
               }
