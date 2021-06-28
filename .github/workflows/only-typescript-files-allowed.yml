@@ -41,20 +41,14 @@ jobs:
           REMOVED_FILES: ${{ steps.files.outputs.removed }}
           RENAMED_FILES: ${{ steps.files.outputs.renamed }}
 
-
-
         with:
           script: |
-            console.info('Added Files');
             console.info(process.env.ADDED_FILES);
             console.info('$$$$$$$$$');
-            console.info('Modified Files');
             console.info(process.env.MODIFIED_FILES);
             console.info('$$$$$$');
-            console.info('Removed Files');
             console.info(process.env.REMOVED_FILES);
             console.info('$$$$$$$$');
-            console.info('Renamed Files');
             console.info(process.env.RENAMED_FILES);
 
             const removedFiles = JSON.parse(process.env.REMOVED_FILES);
@@ -62,7 +56,7 @@ jobs:
             console.info('print removed files');
             removedFiles.forEach(file => {
             	console.info(file);
-                if (file.endsWith('.js)){
+                if (file.endsWith('.js')){
                 console.info('The file is javascript');
               }
             });
