@@ -26,11 +26,11 @@ jobs:
     name: Check that typescript renaming is mapped correctly
     runs-on: ubuntu-latest
     steps:
-
       - id: files
         uses: jitterbit/get-changed-files@v1
         with:
           format: 'json'
+
       - uses: actions/github-script@v4
         env:
           FILES_OUTPUT: ${{ steps.files.outputs }}
@@ -38,7 +38,6 @@ jobs:
           script: |
             console.info(process.env.FILES_OUTPUT);
             console.info('$$$$$$$$$');
-
 
 
           
