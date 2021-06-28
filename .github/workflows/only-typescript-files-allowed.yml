@@ -1,5 +1,5 @@
 name: Only Typescript files allowed
-on: [pull_request, push_request]
+on: [pull_request, push]
 jobs:
   Verify-Changeset-Code-Type:
     name: Check there are no Javascript files in the changeset
