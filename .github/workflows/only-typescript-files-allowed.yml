@@ -26,8 +26,16 @@ jobs:
     name: Check that typescript renaming is mapped correctly
     runs-on: ubuntu-latest
     steps:
+
+
       - uses: actions/github-script@v4
         with:
           script: |
             console.info('check');
+      - id: files
+        uses: jitterbit/get-changed-files@v1
+        with:
+          format: 'csv'
+      - name: Print modified files
+        run: echo ${{ steps.files.outputs.added_modified }}
           
