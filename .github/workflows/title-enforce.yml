@@ -1,37 +1,78 @@
 name: PR title must contain JIRA issue key. Status of the issue must be [In Progress] or [Ready for QC]
 on:
   pull_request:
-    types: [opened, edited, reopened, synchronize]
+    types: [ opened, edited, reopened, synchronize ]
+
 jobs:
   title-enforce:
     name: PR title enforce
     runs-on: ubuntu-latest
     if: ${{github.event.pull_request.user.type != 'Bot'}}
     steps:
-      - uses: actions/github-script@v3
+      - uses: actions/github-script@v4
         id: get-title
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
             core.setOutput('title', context.payload.pull_request.title)
+
       - uses: AsasInnab/regex-action@v1
         id: get-issue-key
         with:
           regex_pattern: 'LAMBDA-[0-9]+'
           regex_flags: 'gim'
           search_string: ${{steps.get-title.outputs.title}}
+
       - if: ${{steps.get-issue-key.outputs.first_match == ''}}
         run: |
           echo 'Pull request title must contain the JIRA issue key in format LAMBDA-[0-9]+'
           exit 1
+
       - uses: actionsflow/axios@v1
         id: get-issue-status
         with:
           url: https://rapid-engineering.atlassian.net/rest/api/latest/issue/${{steps.get-issue-key.outputs.first_match}}
           basic-auth: ${{secrets.JIRA_MILOS_AUTH}}
+
       - if: ${{fromJson(steps.get-issue-status.outputs.data).fields.status.name != 'In Progress' && fromJson(steps.get-issue-status.outputs.data).fields.status.name != 'Ready for QC' && fromJson(steps.get-issue-status.outputs.data).fields.status.name != 'In QC'}}
         run: |
           echo 'Status of the issue ${{steps.get-issue-key.outputs.first_match}} must be [In Progress], [Ready for QC] or [In QC]'
           exit 2
 
-      - run: exit 0
+      - name: install npm packages
+        run: npm i axios
+
+      - uses: actions/github-script@v4
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          ISSUE_KEY: ${{ steps.get-issue-key.outputs.first_match }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }} #should be modified to LAMBDA_TOKEN
+          script: |
+            const axios = require("axios");
+            const {owner, repo} = context.repo;
+            const jiraToken = Buffer.from("${{secrets.JIRA_MILOS_AUTH}}").toString('base64');
+            const issueKey = process.env.ISSUE_KEY;
+            const issue = (await axios.get(`https://rapid-engineering.atlassian.net/rest/api/latest/issue/${ issueKey }`, {
+              headers: { Authorization: `Basic ${jiraToken}` }})).data;
+            if (issue.fields.customfield_10217) {
+              const pullRequestLink = `https://github.com/${owner}/${repo}/pull/${process.env.PR_NUMBER}`;
+              console.info(`Code Field = ${issue.fields.customfield_10217}`);
+              if (issue.fields.customfield_10217.includes(pullRequestLink)) {
+                const jql = `cf[10217]="${pullRequestLink}" OR cf[10217]="${pullRequestLink}/commits" ` +
+                            `OR cf[10217]="${pullRequestLink}/checks" OR cf[10217]="${pullRequestLink}/files"`;
+                const searchIssues = (await axios.get(`https://rapid-engineering.atlassian.net/rest/api/latest/search?jql=${ jql }`, {
+                                       headers: { Authorization: `Basic ${jiraToken}` }})).data;
+                if (searchIssues.total != 1) {
+                  console.info(`PR #${ process.env.PR_NUMBER }: More than 1 ticket refers to the same pull request.`);
+                  process.exit(3);
+                }
+              } else {
+                console.info(`PR #${ process.env.PR_NUMBER }: The code field does not point to the Pull Request.`);
+                process.exit(4);
+              }
+            } else {
+              console.info(`PR #${ process.env.PR_NUMBER }: The code field is empty.`);
+              process.exit(5);
+            }
