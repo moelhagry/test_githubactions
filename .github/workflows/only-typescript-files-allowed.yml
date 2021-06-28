@@ -54,7 +54,6 @@ jobs:
                   console.info('Wrong classification of a .js rename to .ts');
                   process.exit(1);
                 }
-
               }
             });
 
