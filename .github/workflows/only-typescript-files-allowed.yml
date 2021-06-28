@@ -21,4 +21,13 @@ jobs:
         run: |
           echo .js files detected
           exit 1
+
+  Typescript-renaming-is-correct:
+    name: Check that typescript renaming is mapped correctly
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v4
+        with:
+          script: |
+            console.info('check');
           
