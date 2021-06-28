@@ -56,7 +56,9 @@ jobs:
             console.info('$$$$$$$$');
             console.info('Renamed Files');
             console.info(process.env.RENAMED_FILES);
+
             const removedFiles = JSON.parse(process.env.REMOVED_FILES);
+            console.info('print removed files');
             removedFiles.forEach(file => {
             	console.info(file);
             });
