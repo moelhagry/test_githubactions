@@ -22,7 +22,6 @@ jobs:
           echo .js files detected
           exit 1
 
-
   Typescript-renaming-is-correct:
     name: Javascript files renamed to Typescript
     runs-on: ubuntu-latest
@@ -45,9 +44,7 @@ jobs:
             const removedFiles = JSON.parse(process.env.REMOVED_FILES);
             const addedORModifiedFiles = JSON.parse(process.env.ADDED_MODIFIED_FILES);
             removedFiles.forEach(file => {
-            	console.info(file);
                 if (file.endsWith('.js')){
-                console.info('The file is javascript');
                 const fileName = file.slice(0, file.length - 3);
                 if (addedORModifiedFiles.includes(`${fileName}.ts`)) {
                   console.info('Javascript files were deleted and new Typescript files added instead of renaming');
