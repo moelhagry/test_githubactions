@@ -23,7 +23,7 @@ jobs:
           exit 1
 
   Typescript-renaming-is-correct:
-    name: Check that typescript renaming is mapped correctly
+    name: Javascript files renamed to Typescript
     runs-on: ubuntu-latest
     steps:
       - id: files
@@ -49,9 +49,7 @@ jobs:
                 console.info('The file is javascript');
                 const fileName = file.slice(0, file.length - 3);
                 if (addedORModifiedFiles.includes(`${fileName}.ts`)) {
-                  console.info(addedORModifiedFiles);
-                  console.info(`${fileName}.ts`);
-                  console.info('Wrong classification of a .js rename to .ts');
+                  console.info('Javascript files were deleted and new Typescript files added instead of renaming');
                   process.exit(1);
                 }
               }
