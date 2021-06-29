@@ -22,6 +22,7 @@ jobs:
           echo .js files detected
           exit 1
 
+
   Typescript-renaming-is-correct:
     name: Javascript files renamed to Typescript
     runs-on: ubuntu-latest
