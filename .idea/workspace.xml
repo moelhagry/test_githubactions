@@ -19,7 +19,9 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f7fd3cd8-e807-4be1-a486-0f2e6be98407" name="Default Changelist" comment="" />
+    <list default="true" id="f7fd3cd8-e807-4be1-a486-0f2e6be98407" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.github/workflows/auto-update.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/auto-update.yml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -60,6 +62,7 @@
       <workItem from="1614085289047" duration="1089000" />
       <workItem from="1614086380792" duration="11000" />
       <workItem from="1614086404823" duration="3571000" />
+      <workItem from="1635772762349" duration="6000" />
     </task>
     <servers />
   </component>
