@@ -5,7 +5,7 @@ on:
   pull_request:
     types: [unlabeled]
 
-    
+
   workflow_dispatch:
 jobs:
   autoupdate-branches:
